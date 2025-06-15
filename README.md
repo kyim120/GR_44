@@ -1,5 +1,4 @@
-Absolutely! Let's walk through **every part of the Tic-Tac-Toe C++ program** step by step and explain what each section does.
-
+# **Explaination**
 ---
 
 ### ✅ **Header and Namespace**
