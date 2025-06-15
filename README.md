@@ -1,420 +1,294 @@
-# **Explaination**
+# *Online Shopping Cart System*
+
+* ✅ **User input for product details**
+* ✅ **Dynamic product creation using a menu**
+* ✅ **Repeatable shopping session**
+* ✅ **Improved formatting**
+* ✅ **Same OOP concepts**: Inheritance, Polymorphism, Encapsulation, Operator Overloading, File Handling
+
 ---
 
-### ✅ **Header and Namespace**
+### 🧾 Final Menu-Based Version
 
 ```cpp
 #include <iostream>
+#include <vector>
+#include <fstream>
 using namespace std;
-```
 
-* `#include <iostream>`: Includes the Input/Output library for using `cin` (input) and `cout` (output).
-* `using namespace std;`: So we don’t have to write `std::cout` every time.
+// ======================= Base Class =========================
+class Product {
+protected:
+    string name;
+    double basePrice;
 
----
-
-### ✅ **Class Definition: TicTacToe**
-
-```cpp
-class TicTacToe {
-private:
-    char board[3][3];       // 3x3 grid for the game
-    char currentPlayer;     // Tracks whether it's X or O's turn
-```
-
-* This is the definition of the `TicTacToe` class.
-* It has two **private members**:
-
-  * `board[3][3]`: A 2D array representing the 3x3 game board.
-  * `currentPlayer`: A character variable to track who's playing ('X' or 'O').
-
----
-
-### ✅ **Constructor**
-
-```cpp
 public:
-    TicTacToe() {
-        resetBoard();          // Initialize the board to empty
-        currentPlayer = 'X';   // Player X starts first
+    Product(string n = "", double p = 0.0) : name(n), basePrice(p) {}
+    virtual double getPrice() const = 0;
+    virtual void display() const = 0;
+    virtual string getDetails() const = 0;
+    virtual ~Product() {}
+};
+
+// ======================= Derived Classes =========================
+
+class Electronics : public Product {
+    int warranty;
+public:
+    Electronics(string n, double p, int w) : Product(n, p), warranty(w) {}
+    double getPrice() const override { return basePrice + (warranty * 10); }
+    void display() const override {
+        cout << "📱 Electronics - " << name << " | Price: $" << getPrice()
+             << " | Warranty: " << warranty << " months\n";
     }
-```
-
-* Constructor runs automatically when a `TicTacToe` object is created.
-* It resets the board and sets the first player to 'X'.
-
----
-
-### ✅ **Reset Board Function**
-
-```cpp
-    void resetBoard() {
-        for (int i = 0; i < 3; ++i)
-            for (int j = 0; j < 3; ++j)
-                board[i][j] = ' ';
-    }
-```
-
-* Clears the board by setting all cells to `' '` (blank).
-* Called at the start and every time you replay.
-
----
-
-### ✅ **Display the Board**
-
-```cpp
-    void displayBoard() {
-        cout << "\n";
-        cout << "  0   1   2\n";
-        for (int i = 0; i < 3; ++i) {
-            cout << i << " ";
-            for (int j = 0; j < 3; ++j) {
-                cout << board[i][j];
-                if (j < 2) cout << " | ";
-            }
-            cout << "\n";
-            if (i < 2) cout << "  ---------\n";
-        }
-        cout << "\n";
-    }
-```
-
-* Prints the current board layout with row and column numbers.
-* Uses formatting to make it look like a real Tic-Tac-Toe grid.
-
----
-
-### ✅ **Make a Move**
-
-```cpp
-    bool makeMove(int row, int col) {
-        if (row >= 0 && row < 3 && col >= 0 && col < 3 && board[row][col] == ' ') {
-            board[row][col] = currentPlayer;
-            return true;
-        }
-        return false;
-    }
-```
-
-* This function takes a `row` and `col` and places the current player's symbol (`X` or `O`) on the board.
-* Checks if the move is valid (within bounds and empty).
-* Returns `true` if successful, `false` if not.
-
----
-
-### ✅ **Check for Win**
-
-```cpp
-    bool checkWin() {
-        for (int i = 0; i < 3; ++i) {
-            if ((board[i][0] == currentPlayer &&
-                 board[i][1] == currentPlayer &&
-                 board[i][2] == currentPlayer) ||
-                (board[0][i] == currentPlayer &&
-                 board[1][i] == currentPlayer &&
-                 board[2][i] == currentPlayer))
-                return true;
-        }
-
-        if ((board[0][0] == currentPlayer &&
-             board[1][1] == currentPlayer &&
-             board[2][2] == currentPlayer) ||
-            (board[0][2] == currentPlayer &&
-             board[1][1] == currentPlayer &&
-             board[2][0] == currentPlayer))
-            return true;
-
-        return false;
-    }
-```
-
-* Checks if the current player has won:
-
-  * Horizontally (rows)
-  * Vertically (columns)
-  * Diagonally (2 diagonals)
-* Returns `true` if a win condition is met.
-
----
-
-### ✅ **Check for Draw**
-
-```cpp
-    bool checkDraw() {
-        for (int i = 0; i < 3; ++i)
-            for (int j = 0; j < 3; ++j)
-                if (board[i][j] == ' ')
-                    return false;
-        return true;
-    }
-```
-
-* Checks if the board is full (no empty spaces left).
-* If full and no winner: it’s a draw.
-
----
-
-### ✅ **Switch Player**
-
-```cpp
-    void switchPlayer() {
-        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
-    }
-```
-
-* Switches the turn between `X` and `O`.
-
----
-
-### ✅ **Get Current Player**
-
-```cpp
-    char getCurrentPlayer() {
-        return currentPlayer;
+    string getDetails() const override {
+        return "Electronics," + name + "," + to_string(getPrice()) + "," + to_string(warranty) + "\n";
     }
 };
-```
 
-* Returns the symbol of the current player.
+class Clothing : public Product {
+    string size;
+public:
+    Clothing(string n, double p, string s) : Product(n, p), size(s) {}
+    double getPrice() const override { return basePrice * 1.1; }
+    void display() const override {
+        cout << "👕 Clothing - " << name << " | Price: $" << getPrice()
+             << " | Size: " << size << "\n";
+    }
+    string getDetails() const override {
+        return "Clothing," + name + "," + to_string(getPrice()) + "," + size + "\n";
+    }
+};
 
----
+class Grocery : public Product {
+    double weight;
+public:
+    Grocery(string n, double p, double w) : Product(n, p), weight(w) {}
+    double getPrice() const override { return basePrice * weight; }
+    void display() const override {
+        cout << "🍎 Grocery - " << name << " | Price: $" << getPrice()
+             << " | Weight: " << weight << " kg\n";
+    }
+    string getDetails() const override {
+        return "Grocery," + name + "," + to_string(getPrice()) + "," + to_string(weight) + "kg\n";
+    }
+};
 
-### ✅ **Main Function**
+// ======================= Shopping Cart =========================
 
-```cpp
-int main() {
-    TicTacToe game;
-    int row, col;
-    char playAgain;
-```
+class ShoppingCart {
+    vector<Product*> items;
 
-* `TicTacToe game;`: Creates an instance of the game.
-* Variables `row`, `col` are used for input.
-* `playAgain` handles the replay option.
+public:
+    void operator+(Product* p) {
+        items.push_back(p);
+    }
 
----
-
-### ✅ **Main Game Loop**
-
-```cpp
-    do {
-        game.resetBoard();
-        game.displayBoard();
-```
-
-* Game starts fresh every time.
-
----
-
-### ✅ **Inner Gameplay Loop**
-
-```cpp
-        while (true) {
-            cout << "Player " << game.getCurrentPlayer() << ", enter row and column (0-2): ";
-            cin >> row >> col;
-
-            if (!game.makeMove(row, col)) {
-                cout << "Invalid move! Try again.\n";
-                continue;
-            }
-
-            game.displayBoard();
-
-            if (game.checkWin()) {
-                cout << "Player " << game.getCurrentPlayer() << " wins!\n";
-                break;
-            }
-
-            if (game.checkDraw()) {
-                cout << "It's a draw!\n";
-                break;
-            }
-
-            game.switchPlayer();
+    void showCart() const {
+        if (items.empty()) {
+            cout << "\n🛒 Cart is empty.\n";
+            return;
         }
-```
 
-* Keeps running until there's a win or draw.
-* Takes input for the move.
-* Makes the move if valid.
-* Checks for win/draw.
-* Switches player turn.
+        cout << "\n🛒 Shopping Cart Contents:\n";
+        double total = 0;
+        for (auto& item : items) {
+            item->display();
+            total += item->getPrice();
+        }
+        cout << "💰 Total: $" << total << "\n";
+    }
 
----
+    void saveToFile(string filename = "cart.txt") {
+        ofstream outFile(filename);
+        for (auto& item : items) {
+            outFile << item->getDetails();
+        }
+        outFile.close();
+        cout << "✅ Cart saved to file: " << filename << "\n";
+    }
 
-### ✅ **Replay Option**
+    ~ShoppingCart() {
+        for (auto& item : items)
+            delete item;
+    }
+};
 
-```cpp
-        cout << "Do you want to play again? (y/n): ";
-        cin >> playAgain;
+// ======================= Main Menu =========================
 
-    } while (playAgain == 'y' || playAgain == 'Y');
-
-    cout << "Thanks for playing!\n";
-    return 0;
+void displayMenu() {
+    cout << "\n========= 🛍 SHOPPING MENU =========\n";
+    cout << "1. Add Electronics\n";
+    cout << "2. Add Clothing\n";
+    cout << "3. Add Grocery\n";
+    cout << "4. View Cart\n";
+    cout << "5. Save and Exit\n";
+    cout << "====================================\n";
+    cout << "Choose an option: ";
 }
-```
-
-* After each game, asks user if they want to replay.
-* Loop continues if they enter `y` or `Y`.
-
----
-
-### ✅ Summary of Concepts Used:
-
-| Feature         | Used Concept             |
-| --------------- | ------------------------ |
-| Game logic      | **If-else**, **Loops**   |
-| Board state     | **2D arrays**            |
-| Players turn    | **Switch logic**         |
-| Win/Draw check  | **Conditionals**         |
-| Replay system   | **do-while loop**        |
-| Encapsulation   | **Classes**              |
-| Object-oriented | **Methods inside class** |
-
----
-
-# **Code**
-
-* 2-player mode
-* Win/draw check
-* Reset and replay option
-
----
-
-### ✅ **TicTacToe Game in C++ (OOP)**
-
-```cpp
-#include <iostream>
-using namespace std;
-
-class TicTacToe {
-private:
-    char board[3][3];
-    char currentPlayer;
-
-public:
-    TicTacToe() {
-        resetBoard();
-        currentPlayer = 'X';
-    }
-
-    void resetBoard() {
-        for (int i = 0; i < 3; ++i)
-            for (int j = 0; j < 3; ++j)
-                board[i][j] = ' ';
-    }
-
-    void displayBoard() {
-        cout << "\n";
-        cout << "  0   1   2\n";
-        for (int i = 0; i < 3; ++i) {
-            cout << i << " ";
-            for (int j = 0; j < 3; ++j) {
-                cout << board[i][j];
-                if (j < 2) cout << " | ";
-            }
-            cout << "\n";
-            if (i < 2) cout << "  ---------\n";
-        }
-        cout << "\n";
-    }
-
-    bool makeMove(int row, int col) {
-        if (row >= 0 && row < 3 && col >= 0 && col < 3 && board[row][col] == ' ') {
-            board[row][col] = currentPlayer;
-            return true;
-        }
-        return false;
-    }
-
-    bool checkWin() {
-        // Rows and columns
-        for (int i = 0; i < 3; ++i) {
-            if ((board[i][0] == currentPlayer &&
-                 board[i][1] == currentPlayer &&
-                 board[i][2] == currentPlayer) ||
-                (board[0][i] == currentPlayer &&
-                 board[1][i] == currentPlayer &&
-                 board[2][i] == currentPlayer))
-                return true;
-        }
-
-        // Diagonals
-        if ((board[0][0] == currentPlayer &&
-             board[1][1] == currentPlayer &&
-             board[2][2] == currentPlayer) ||
-            (board[0][2] == currentPlayer &&
-             board[1][1] == currentPlayer &&
-             board[2][0] == currentPlayer))
-            return true;
-
-        return false;
-    }
-
-    bool checkDraw() {
-        for (int i = 0; i < 3; ++i)
-            for (int j = 0; j < 3; ++j)
-                if (board[i][j] == ' ')
-                    return false;
-        return true;
-    }
-
-    void switchPlayer() {
-        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
-    }
-
-    char getCurrentPlayer() {
-        return currentPlayer;
-    }
-};
 
 int main() {
-    TicTacToe game;
-    int row, col;
-    char playAgain;
+    ShoppingCart cart;
+    int choice;
 
     do {
-        game.resetBoard();
-        game.displayBoard();
+        displayMenu();
+        cin >> choice;
 
-        while (true) {
-            cout << "Player " << game.getCurrentPlayer() << ", enter row and column (0-2): ";
-            cin >> row >> col;
-
-            if (!game.makeMove(row, col)) {
-                cout << "Invalid move! Try again.\n";
-                continue;
-            }
-
-            game.displayBoard();
-
-            if (game.checkWin()) {
-                cout << "Player " << game.getCurrentPlayer() << " wins!\n";
-                break;
-            }
-
-            if (game.checkDraw()) {
-                cout << "It's a draw!\n";
-                break;
-            }
-
-            game.switchPlayer();
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(10000, '\n');
+            cout << "❌ Invalid input. Try again.\n";
+            continue;
         }
 
-        cout << "Do you want to play again? (y/n): ";
-        cin >> playAgain;
+        string name, size;
+        double price, weight;
+        int warranty;
 
-    } while (playAgain == 'y' || playAgain == 'Y');
+        switch (choice) {
+        case 1:
+            cout << "Enter name of Electronic item: ";
+            cin >> ws;
+            getline(cin, name);
+            cout << "Enter base price: ";
+            cin >> price;
+            cout << "Enter warranty (months): ";
+            cin >> warranty;
+            cart + new Electronics(name, price, warranty);
+            break;
 
-    cout << "Thanks for playing!\n";
+        case 2:
+            cout << "Enter name of Clothing item: ";
+            cin >> ws;
+            getline(cin, name);
+            cout << "Enter base price: ";
+            cin >> price;
+            cout << "Enter size (S/M/L): ";
+            cin >> size;
+            cart + new Clothing(name, price, size);
+            break;
+
+        case 3:
+            cout << "Enter name of Grocery item: ";
+            cin >> ws;
+            getline(cin, name);
+            cout << "Enter price per kg: ";
+            cin >> price;
+            cout << "Enter weight (kg): ";
+            cin >> weight;
+            cart + new Grocery(name, price, weight);
+            break;
+
+        case 4:
+            cart.showCart();
+            break;
+
+        case 5:
+            cart.saveToFile();
+            cout << "👋 Exiting... Thank you for shopping!\n";
+            break;
+
+        default:
+            cout << "❌ Invalid choice. Please try again.\n";
+        }
+
+    } while (choice != 5);
+
     return 0;
 }
 ```
 
 ---
 
-### 🔧 **How to Run:**
+## ✅ Features Added
 
-1. Save as `TicTacToe.cpp`
-2. Compile:
+| Feature                 | Description                               |
+| ----------------------- | ----------------------------------------- |
+| ✅ Menu-driven interface | Easy navigation to add/view/save products |
+| ✅ Input validation      | Prevents crash on invalid input           |
+| ✅ Dynamic product entry | User types name, price, etc.              |
+| ✅ Operator overloading  | `cart + new Product(...)`                 |
+| ✅ File handling         | Saves cart to `cart.txt`                  |
+
+---
+
+---
+
+### 🖥️ **Sample Console Output**
+
+```
+========= 🛍 SHOPPING MENU =========
+1. Add Electronics
+2. Add Clothing
+3. Add Grocery
+4. View Cart
+5. Save and Exit
+====================================
+Choose an option: 1
+Enter name of Electronic item: Laptop
+Enter base price: 1000
+Enter warranty (months): 12
+
+========= 🛍 SHOPPING MENU =========
+1. Add Electronics
+2. Add Clothing
+3. Add Grocery
+4. View Cart
+5. Save and Exit
+====================================
+Choose an option: 2
+Enter name of Clothing item: Jacket
+Enter base price: 150
+Enter size (S/M/L): L
+
+========= 🛍 SHOPPING MENU =========
+1. Add Electronics
+2. Add Clothing
+3. Add Grocery
+4. View Cart
+5. Save and Exit
+====================================
+Choose an option: 3
+Enter name of Grocery item: Rice
+Enter price per kg: 2
+Enter weight (kg): 5
+
+========= 🛍 SHOPPING MENU =========
+1. Add Electronics
+2. Add Clothing
+3. Add Grocery
+4. View Cart
+5. Save and Exit
+====================================
+Choose an option: 4
+
+🛒 Shopping Cart Contents:
+📱 Electronics - Laptop | Price: $1120 | Warranty: 12 months
+👕 Clothing - Jacket | Price: $165 | Size: L
+🍎 Grocery - Rice | Price: $10 | Weight: 5 kg
+💰 Total: $1295
+
+========= 🛍 SHOPPING MENU =========
+1. Add Electronics
+2. Add Clothing
+3. Add Grocery
+4. View Cart
+5. Save and Exit
+====================================
+Choose an option: 5
+✅ Cart saved to file: cart.txt
+👋 Exiting... Thank you for shopping!
+```
+
+---
+
+### 🗃️ Contents of `cart.txt` (after saving)
+
+```
+Electronics,Laptop,1120.000000,12
+Clothing,Jacket,165.000000,L
+Grocery,Rice,10.000000,5kg
+```
+
+---
