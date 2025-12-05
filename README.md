@@ -1,294 +1,171 @@
-# *Online Shopping Cart System*
+# Bayes' Theorem & Its Applications
 
-* ✅ **User input for product details**
-* ✅ **Dynamic product creation using a menu**
-* ✅ **Repeatable shopping session**
-* ✅ **Improved formatting**
-* ✅ **Same OOP concepts**: Inheritance, Polymorphism, Encapsulation, Operator Overloading, File Handling
+## 1. Introduction
+Bayes’ Theorem helps us update our beliefs when new information becomes available. It is foundational in statistics, decision-making, AI, and machine learning.
 
 ---
 
-### 🧾 Final Menu-Based Version
+## 2. Basic Terms
+### **2.1 Experiment**
+An action that leads to an outcome.
 
-```cpp
-#include <iostream>
-#include <vector>
-#include <fstream>
-using namespace std;
+### **2.2 Sample Space (S)**
+All possible outcomes.
 
-// ======================= Base Class =========================
-class Product {
-protected:
-    string name;
-    double basePrice;
+### **2.3 Event**
+A desired outcome from the sample space.
 
-public:
-    Product(string n = "", double p = 0.0) : name(n), basePrice(p) {}
-    virtual double getPrice() const = 0;
-    virtual void display() const = 0;
-    virtual string getDetails() const = 0;
-    virtual ~Product() {}
-};
-
-// ======================= Derived Classes =========================
-
-class Electronics : public Product {
-    int warranty;
-public:
-    Electronics(string n, double p, int w) : Product(n, p), warranty(w) {}
-    double getPrice() const override { return basePrice + (warranty * 10); }
-    void display() const override {
-        cout << "📱 Electronics - " << name << " | Price: $" << getPrice()
-             << " | Warranty: " << warranty << " months\n";
-    }
-    string getDetails() const override {
-        return "Electronics," + name + "," + to_string(getPrice()) + "," + to_string(warranty) + "\n";
-    }
-};
-
-class Clothing : public Product {
-    string size;
-public:
-    Clothing(string n, double p, string s) : Product(n, p), size(s) {}
-    double getPrice() const override { return basePrice * 1.1; }
-    void display() const override {
-        cout << "👕 Clothing - " << name << " | Price: $" << getPrice()
-             << " | Size: " << size << "\n";
-    }
-    string getDetails() const override {
-        return "Clothing," + name + "," + to_string(getPrice()) + "," + size + "\n";
-    }
-};
-
-class Grocery : public Product {
-    double weight;
-public:
-    Grocery(string n, double p, double w) : Product(n, p), weight(w) {}
-    double getPrice() const override { return basePrice * weight; }
-    void display() const override {
-        cout << "🍎 Grocery - " << name << " | Price: $" << getPrice()
-             << " | Weight: " << weight << " kg\n";
-    }
-    string getDetails() const override {
-        return "Grocery," + name + "," + to_string(getPrice()) + "," + to_string(weight) + "kg\n";
-    }
-};
-
-// ======================= Shopping Cart =========================
-
-class ShoppingCart {
-    vector<Product*> items;
-
-public:
-    void operator+(Product* p) {
-        items.push_back(p);
-    }
-
-    void showCart() const {
-        if (items.empty()) {
-            cout << "\n🛒 Cart is empty.\n";
-            return;
-        }
-
-        cout << "\n🛒 Shopping Cart Contents:\n";
-        double total = 0;
-        for (auto& item : items) {
-            item->display();
-            total += item->getPrice();
-        }
-        cout << "💰 Total: $" << total << "\n";
-    }
-
-    void saveToFile(string filename = "cart.txt") {
-        ofstream outFile(filename);
-        for (auto& item : items) {
-            outFile << item->getDetails();
-        }
-        outFile.close();
-        cout << "✅ Cart saved to file: " << filename << "\n";
-    }
-
-    ~ShoppingCart() {
-        for (auto& item : items)
-            delete item;
-    }
-};
-
-// ======================= Main Menu =========================
-
-void displayMenu() {
-    cout << "\n========= 🛍 SHOPPING MENU =========\n";
-    cout << "1. Add Electronics\n";
-    cout << "2. Add Clothing\n";
-    cout << "3. Add Grocery\n";
-    cout << "4. View Cart\n";
-    cout << "5. Save and Exit\n";
-    cout << "====================================\n";
-    cout << "Choose an option: ";
-}
-
-int main() {
-    ShoppingCart cart;
-    int choice;
-
-    do {
-        displayMenu();
-        cin >> choice;
-
-        if (cin.fail()) {
-            cin.clear();
-            cin.ignore(10000, '\n');
-            cout << "❌ Invalid input. Try again.\n";
-            continue;
-        }
-
-        string name, size;
-        double price, weight;
-        int warranty;
-
-        switch (choice) {
-        case 1:
-            cout << "Enter name of Electronic item: ";
-            cin >> ws;
-            getline(cin, name);
-            cout << "Enter base price: ";
-            cin >> price;
-            cout << "Enter warranty (months): ";
-            cin >> warranty;
-            cart + new Electronics(name, price, warranty);
-            break;
-
-        case 2:
-            cout << "Enter name of Clothing item: ";
-            cin >> ws;
-            getline(cin, name);
-            cout << "Enter base price: ";
-            cin >> price;
-            cout << "Enter size (S/M/L): ";
-            cin >> size;
-            cart + new Clothing(name, price, size);
-            break;
-
-        case 3:
-            cout << "Enter name of Grocery item: ";
-            cin >> ws;
-            getline(cin, name);
-            cout << "Enter price per kg: ";
-            cin >> price;
-            cout << "Enter weight (kg): ";
-            cin >> weight;
-            cart + new Grocery(name, price, weight);
-            break;
-
-        case 4:
-            cart.showCart();
-            break;
-
-        case 5:
-            cart.saveToFile();
-            cout << "👋 Exiting... Thank you for shopping!\n";
-            break;
-
-        default:
-            cout << "❌ Invalid choice. Please try again.\n";
-        }
-
-    } while (choice != 5);
-
-    return 0;
-}
+### **2.4 Conditional Probability**
+Probability of event A given event B has already occurred:
+```
+P(A|B) = P(A ∩ B) / P(B)
 ```
 
 ---
 
-## ✅ Features Added
-
-| Feature                 | Description                               |
-| ----------------------- | ----------------------------------------- |
-| ✅ Menu-driven interface | Easy navigation to add/view/save products |
-| ✅ Input validation      | Prevents crash on invalid input           |
-| ✅ Dynamic product entry | User types name, price, etc.              |
-| ✅ Operator overloading  | `cart + new Product(...)`                 |
-| ✅ File handling         | Saves cart to `cart.txt`                  |
-
----
-
----
-
-### 🖥️ **Sample Console Output**
-
+## 3. Bayes’ Theorem
+Bayes’ theorem reverses conditional probability:
 ```
-========= 🛍 SHOPPING MENU =========
-1. Add Electronics
-2. Add Clothing
-3. Add Grocery
-4. View Cart
-5. Save and Exit
-====================================
-Choose an option: 1
-Enter name of Electronic item: Laptop
-Enter base price: 1000
-Enter warranty (months): 12
+P(A|B) = [P(B|A) * P(A)] / P(B)
+```
 
-========= 🛍 SHOPPING MENU =========
-1. Add Electronics
-2. Add Clothing
-3. Add Grocery
-4. View Cart
-5. Save and Exit
-====================================
-Choose an option: 2
-Enter name of Clothing item: Jacket
-Enter base price: 150
-Enter size (S/M/L): L
+Where:
+- **P(A|B)** = Probability of A after observing B
+- **P(B|A)** = Probability of B if A happened
+- **P(A)** = Prior probability of A
+- **P(B)** = Prior probability of B
 
-========= 🛍 SHOPPING MENU =========
-1. Add Electronics
-2. Add Clothing
-3. Add Grocery
-4. View Cart
-5. Save and Exit
-====================================
-Choose an option: 3
-Enter name of Grocery item: Rice
-Enter price per kg: 2
-Enter weight (kg): 5
+---
 
-========= 🛍 SHOPPING MENU =========
-1. Add Electronics
-2. Add Clothing
-3. Add Grocery
-4. View Cart
-5. Save and Exit
-====================================
-Choose an option: 4
+## 4. Importance
+Bayes’ theorem helps answer questions like:
+**"Given a test result or observation, what is the probability of the actual cause?"**
 
-🛒 Shopping Cart Contents:
-📱 Electronics - Laptop | Price: $1120 | Warranty: 12 months
-👕 Clothing - Jacket | Price: $165 | Size: L
-🍎 Grocery - Rice | Price: $10 | Weight: 5 kg
-💰 Total: $1295
+Used in:
+- Medical diagnosis
+- Machine learning
+- Weather forecasting
+- Fraud detection
+- Quality control
 
-========= 🛍 SHOPPING MENU =========
-1. Add Electronics
-2. Add Clothing
-3. Add Grocery
-4. View Cart
-5. Save and Exit
-====================================
-Choose an option: 5
-✅ Cart saved to file: cart.txt
-👋 Exiting... Thank you for shopping!
+---
+
+## 5. General Bayes’ Theorem (Multiple Events)
+```
+P(Aₖ | B) = [P(B|Aₖ) * P(Aₖ)] / Σ P(B|Aᵢ) * P(Aᵢ)
 ```
 
 ---
 
-### 🗃️ Contents of `cart.txt` (after saving)
-
+## 6. Step-by-Step Method
+1. Identify prior probabilities.
+2. Identify conditional probabilities.
+3. Use total probability:
 ```
-Electronics,Laptop,1120.000000,12
-Clothing,Jacket,165.000000,L
-Grocery,Rice,10.000000,5kg
+P(B) = P(B|A)P(A) + P(B|Aᶜ)P(Aᶜ)
+```
+4. Apply Bayes’ theorem:
+```
+P(A|B) = [P(B|A)P(A)] / P(B)
+```
+
+---
+
+## 7. Applications of Bayes’ Theorem
+### **7.1 Medical Diagnosis**
+Used for cancer tests, COVID tests, pregnancy tests.
+
+### **7.2 Spam Filtering (Naive Bayes)**
+Classifies spam based on word probability.
+
+### **7.3 Weather Forecasting**
+Predicts rain using humidity, cloud data.
+
+### **7.4 Fraud Detection**
+Banks detect unusual spending patterns.
+
+### **7.5 Quality Control**
+Find which machine caused defective products.
+
+---
+
+## 8. Numerical Examples
+### **Example 1: Medical Test**
+A disease affects 2% of people.
+- True positive = 95%
+- False positive = 10%
+
+Find: `P(Disease | Positive)`
+
+Given:
+```
+P(D) = 0.02
+P(Dᶜ) = 0.98
+P(+|D) = 0.95
+P(+|Dᶜ) = 0.10
+```
+
+Total probability:
+```
+P(+) = 0.95*0.02 + 0.10*0.98 = 0.117
+```
+
+Apply Bayes:
+```
+P(D|+) = (0.95*0.02) / 0.117 ≈ 0.162
+```
+**Final Answer: 16.2%**
+
+---
+
+### **Example 2: Factory Machines**
+Machine A produces 40% items, 3% defective.
+Machine B produces 60% items, 1% defective.
+
+Find: `P(Item from A | Defective)`
+
+Total probability:
+```
+P(D) = 0.03*0.40 + 0.01*0.60 = 0.018
+```
+
+Bayes:
+```
+P(A|D) = (0.03*0.40) / 0.018 = 0.6667
+```
+**Final Answer: 66.67%**
+
+---
+
+## 9. Bayes’ Theorem in Machine Learning (Naive Bayes)
+Assumes feature independence and computes class probability.
+Used in:
+- Sentiment analysis
+- Spam detection
+- Text classification
+- Face recognition
+
+---
+
+## 10. Common Student Mistakes
+- Forgetting total probability
+- Confusing P(A|B) with P(B|A)
+- Using percentages instead of decimals
+- Assuming independence without information
+
+---
+
+## 11. Summary Table
+| Term | Meaning |
+|------|----------------------|
+| Prior | Initial belief |
+| Likelihood | Probability of data given condition |
+| Posterior | Updated belief |
+| Evidence | Total probability |
+
+Formula:
+```
+Posterior = (Likelihood × Prior) / Evidence
 ```
 
 ---
